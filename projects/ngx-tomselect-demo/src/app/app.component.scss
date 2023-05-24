@@ -1,0 +1,51 @@
+.sample-container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 900px;
+  padding: 30px;
+  margin: 30px auto;
+  border: 1px solid #e8e8e8;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+
+  > div {
+    padding-right: 30px;
+  }
+}
+
+article {
+  margin: 2em 0 0 0;
+  display: flex;
+  gap: 30px;
+
+  h2 {
+    font-size: 1em;
+    margin: 0 0 0.5em 0;
+    font-weight: lighter;
+    color: darkred;
+  }
+
+
+  div:first-child {
+    flex: 2;
+  }
+
+  div:last-child {
+    flex: 1;
+    border-left: 1px solid #e8e8e8;
+    padding-left: 30px;
+  }
+
+}
+
+p.info {
+  font-size: 0.9em;
+  color: #666;
+}
+
+
+.settings label { font-size: 0.8em; margin-left: 0.5em; }
+.settings input[type="number"] { width: 3em; }
