@@ -1,4 +1,4 @@
-import {TomItem, TomOption, TomInput} from "tom-select/dist/types/types";
+import {TomItem, TomOption} from "tom-select/dist/types/types";
 import TomSelect from "tom-select";
 
 export type TomSelectOption = { class: string; value: string; label: string } & TomOption;

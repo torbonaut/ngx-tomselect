@@ -21,15 +21,25 @@ import {
   TomSelectOptionAddedEvent,
   TomSelectOptionRemovedEvent, TomSelectOptionsLoadedEvent, TomSelectTypeEvent,
 } from "./ngx-tomselect.types";
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
   selector: 'tom-select',
   templateUrl: './ngx-tomselect.component.html',
   styleUrls: [],
   encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: NgxTomSelectComponent,
+      multi: true
+    }
+  ],
 })
-export class NgxTomSelectComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class NgxTomSelectComponent implements AfterViewInit, OnChanges, OnDestroy, ControlValueAccessor {
+  private value: string | string[] = '';
+
   private tomSelect: TomSelect | null = null;
 
 
@@ -107,15 +117,79 @@ export class NgxTomSelectComponent implements AfterViewInit, OnChanges, OnDestro
   @Output() destroy: EventEmitter<void> = new EventEmitter<void>();
 
 
+  onChanged: Function = () => {};
+  onTouched: Function = () => {};
+
   constructor() {
   }
 
+  ngAfterViewInit(): void {
+    this.createTomSelect();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    /*
+    if (this.tomSelect) {
+      if (
+        changes.values.currentValue &&
+        changes.values.currentValue !== changes.values.previousValue
+      ) {
+        let currentValues = this.tomSelect.getValue();
+        if (!(currentValues instanceof Array)) {
+          currentValues = [currentValues];
+        }
+        this.tomSelect.clearOptions();
+        this.tomSelect.addOptions(changes.values.currentValue, false);
+
+        currentValues.filter((val) => val);
+        this.tomSelect.setValue(currentValues, false);
+      }
+    }*/
+  }
+
+  ngOnDestroy() {
+    if (this.tomSelect) {
+      this.tomSelect.destroy();
+    }
+  }
+
+  registerOnChange(fn: any) {
+    this.onChanged = fn;
+  }
+
+  registerOnTouched(fn: any) {
+    this.onTouched = fn;
+  }
+
+  writeValue(value: string | string[] ) {
+    this.value = value;
+
+    if (this.tomSelect) {
+      this.tomSelect.setValue(value, false);
+    }
+  }
+
+  // ToDo: is this needed?
+  setDisabledState(isDisabled: boolean) {
+    this.disabled = isDisabled;
+    if (this.tomSelect) {
+      this.disabled ? this.tomSelect.disable() : this.tomSelect.enable();
+    }
+  }
+
+
   private createTomSelect() {
-    if (this.tomSelectRef) {
+    if (this.tomSelectRef && !this.tomSelect) {
+
       this.tomSelect = new TomSelect(this.tomSelectRef.nativeElement, this.settings);
 
       // Invoked when the value of the control changes.
-      this.tomSelect["on"]('change', (value: string) => this.change.emit({value}));
+      this.tomSelect["on"]('change', (value: any) => {
+        this.value = value;
+        this.onChanged(value);
+        this.onTouched();
+        this.change.emit({value});
+      });
       // Invoked when the control gains focus.
       this.tomSelect["on"]('focus', () => this.focus.emit());
       // Invoked when the control loses focus.
@@ -155,33 +229,13 @@ export class NgxTomSelectComponent implements AfterViewInit, OnChanges, OnDestro
 
   }
 
-  ngAfterViewInit(): void {
-    this.createTomSelect();
-  }
+  /*
 
-  ngOnChanges(changes: SimpleChanges) {
-    /*
-    if (this.tomSelect) {
-      if (
-        changes.values.currentValue &&
-        changes.values.currentValue !== changes.values.previousValue
-      ) {
-        let currentValues = this.tomSelect.getValue();
-        if (!(currentValues instanceof Array)) {
-          currentValues = [currentValues];
-        }
-        this.tomSelect.clearOptions();
-        this.tomSelect.addOptions(changes.values.currentValue, false);
+  In the above example, the @ContentChild decorator is used to reference the projected content with the identifier 'projectedContent'. Then, the ngAfterContentChecked lifecycle hook is implemented, which is called after Angular has checked the content projected into the component.
 
-        currentValues.filter((val) => val);
-        this.tomSelect.setValue(currentValues, false);
-      }
-    }*/
-  }
+Within ngAfterContentChecked, you can check if the projected content has changed by comparing it to the previous value. You can access and manipulate the projected content using the projectedContent reference. In the example, a simple console log statement is used to demonstrate the reaction to content changes.
 
-  ngOnDestroy() {
-    if (this.tomSelect) {
-      this.tomSelect.destroy();
-    }
-  }
+In the parent component's template, you would use the app-child-component selector and provide content to be projected:
+
+   */
 }

@@ -5,7 +5,8 @@ import {
   TomSelectItemRemovedEvent
 } from 'projects/ngx-tomselect/src/lib/ngx-tomselect.types';
 import {NgForm} from "@angular/forms";
-import {Subscription} from "rxjs";
+import {BehaviorSubject, Subscription} from "rxjs";
+import {RecursivePartial, TomSettings} from "tom-select/dist/types/types";
 
 class Settings {
   disabled = false;
@@ -33,7 +34,27 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('form') form!: NgForm;
 
-  subscriptions: Subscription = new Subscription();
+  private subscriptions: Subscription = new Subscription();
+
+  protected settingsOne: RecursivePartial<TomSettings> = { create: false, controlInput: undefined, allowEmptyOption: false }
+  protected selectOneValue: string ='2';
+
+  protected settingsTwo: RecursivePartial<TomSettings> = { create: false, controlInput: undefined, allowEmptyOption: true }
+  protected selectTwoValue: string ='';
+
+  protected settingsThree: RecursivePartial<TomSettings> = { create: false, allowEmptyOption: true }
+  protected selectThreeValue: string ='';
+
+
+  protected settingsFive: RecursivePartial<TomSettings> = { create: false, maxItems: 3 }
+  protected selectFiveValue: string ='';
+
+  protected settingsSix: RecursivePartial<TomSettings> = { create: false, plugins: ['remove_button'] }
+  protected selectSixValue: string ='';
+
+  protected settingsSeven: RecursivePartial<TomSettings> = { create: false, controlInput: undefined, allowEmptyOption: true }
+  protected selectSevenValue: string ='';
+  protected sevenOptions$ = new BehaviorSubject<number[]>([1, 2, 3, 4, 5]);
 
   ngAfterViewInit(): void {
     if (this.form && this.form.valueChanges) {

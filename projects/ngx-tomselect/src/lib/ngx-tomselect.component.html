@@ -1,5 +1,8 @@
 <select
   #tomSelect
-  [attr.placeholder]="placeholder" [attr.autocomplete]="autocomplete" [attr.disabled]="disabled ? disabled : null">
+  [attr.multiple]="multiple ? multiple : null"
+  [attr.placeholder]="placeholder ? placeholder : null"
+  [attr.autocomplete]="autocomplete ? autocomplete : null"
+  [attr.disabled]="disabled ? disabled : null">
   <ng-content />
 </select>
